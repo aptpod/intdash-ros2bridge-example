@@ -1,0 +1,23 @@
+um_callback_threads: 15
+
+upstream:
+  enabled: true
+  formats:
+  - format: "msgpack"
+    writer:
+      path: "/var/run/intdash/up-ros-data.fifo"
+      buffering: true
+
+subscribers:
+  enabled: true
+  topics:
+  - topic_name: "/hello"
+    format:
+    - "msgpack"
+  - topic_name: "/cube_points"
+    format:
+    - "msgpack"
+  - topic_name: "/compressed_image"
+    format:
+    - "msgpack"
+

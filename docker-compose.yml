@@ -1,0 +1,68 @@
+version: '3'
+services:
+  configuration:
+    image: public.ecr.aws/aptpod/intdash-edge-agent2:latest
+    command: /bin/bash -c 'cat /tmp/agent2_config.yml | intdash-agentd config apply /dev/stdin'
+    volumes:
+      - ./services/agent2/agent2_config.yml:/tmp/agent2_config.yml
+      - intdash-edge-agent2-lib:/var/lib/intdash
+
+  intdash-agent:
+    image: public.ecr.aws/aptpod/intdash-edge-agent2:$AGENT2_VERSION
+    depends_on:
+      configuration:
+        condition: service_completed_successfully
+    healthcheck:
+      test: intdash-agentctl ping --with-streamer
+      interval: 1s
+      timeout: 5s
+      retries: 3
+      start_period: 120s
+    command: intdash-agentd serve
+    environment:
+      - AGENT_INTDASH_SERVER_URL
+      - AGENT_INTDASH_PROJECT_UUID
+      - AGENT_INTDASH_EDGE_UUID
+      - AGENT_INTDASH_CLIENT_SECRET
+    stop_grace_period: 60s
+    volumes:
+      - intdash-edge-agent2-lib:/var/lib/intdash
+      - intdash-edge-agent2-run:/var/run/intdash
+
+  intdash_ros2bridge:
+    image: public.ecr.aws/aptpod/intdash-ros2bridge:$ROS2_DISTRO-$BRIDGE_VERSION
+    container_name: intdash_ros2bridge
+    init: true
+    depends_on:
+      intdash-agent:
+        condition: service_healthy
+    network_mode: host
+    ipc: host
+    volumes:
+    - intdash-edge-agent2-run:/var/run/intdash
+    - ./services/bridge/ros2bridge_config.yml:/opt/vm2m/etc/config.yml
+    command: |
+      bash -c "source /opt/ros/$ROS2_DISTRO/setup.bash &&
+               stdbuf -o0 ros2 run intdash_ros2bridge intdash_ros2bridge --ros-args -p config_path:=/opt/vm2m/etc/config.yml"
+
+  ros2_demo:
+    build:
+      context: ./services/ros2_demo/docker
+      args:
+        - ROS2_DISTRO=$ROS2_DISTRO
+    container_name: ros2_demo
+    init: true
+    depends_on:
+      - intdash_ros2bridge
+    network_mode: host
+    ipc: host
+    command: |
+      bash -c "source /opt/ros/$ROS2_DISTRO/setup.bash &&
+               source install/setup.bash &&
+               stdbuf -o0 ros2 launch ros2_demo ros2_demo.launch.xml"
+    
+volumes:
+  intdash-edge-agent2-lib:
+    name: intdash-edge-agent2-lib
+  intdash-edge-agent2-run:
+    name: intdash-edge-agent2-run

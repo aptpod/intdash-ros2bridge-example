@@ -1,0 +1,15 @@
+upstream:
+- id: up-ros-data
+device_connectors_upstream:
+- id: dc-up-ros-data
+  data_name_prefix: v1/10/
+  dest_ids:
+  - up-ros-data
+  enabled: true
+  format: iscp-v2-compat
+  ipc:
+    type: fifo
+    path: /var/run/intdash/up-ros-data.fifo
+streamer:
+  auto_start: true
+  log_file: /tmp/intdash-agent-streamer.log
