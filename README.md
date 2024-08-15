@@ -1,4 +1,4 @@
-# intdash ROS Bridge Example
+# intdash ROS2Bridge Example
 
 This is an example docker container environemnt for intdash ROS2Bridge.
 
