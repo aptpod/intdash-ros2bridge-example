@@ -1,21 +1,19 @@
 # intdash ROS Bridge Example
 
-This is an example docker container environemnt for intdash ROS Bridge.
+This is an example docker container environemnt for intdash ROS2Bridge.
 
 ## Demonstration
 
 ### Contents of the demo
 
-This demonstration provice following upstream and downstream with intdash.
+This demonstration provide following upstreams for intdash.
 
 - Upstream
   - String topic (name: /hello)
   - Poingcloud2 topic (name: /cube_points)
   - Image topic (name: /compressed_image)
-- Downstream
-  - Joy topic (name: /joy)
 
-ROS2 and ROS are supported.
+ROS2 is supported.
 
 A data settings file for Data Visualizer (`assets/intdash-ROS-Example.dat`) is provided for your verification.
 
