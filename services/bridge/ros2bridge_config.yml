@@ -1,4 +1,4 @@
-um_callback_threads: 15
+num_callback_threads: 15
 
 upstream:
   enabled: true
