@@ -73,6 +73,8 @@ intdash Edge Agent2の設定方法については、Aptpodの公式ドキュメ�
 
 `edge1.env`と`edge2.env`および、`service/agent2/agent2_config_edge1.yml`と`service/agent2/agent2_config_edge2.yml`の`src_edge_uuid`を編集したのち、次のコマンドを実行します。
 
+コマンドを実行することで、intdash ROS2Bridgeのコンテナ上で、ROS2コマンドを試すことができます。
+
 ### エッジデバイス1
 
 ``` 
