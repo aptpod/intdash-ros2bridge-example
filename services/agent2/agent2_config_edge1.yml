@@ -1,0 +1,50 @@
+upstream:
+- id: up-ros-data
+
+downstream:
+- id: down-ros-data
+  dest_ids:
+  - dc-down-cdr
+  filters:
+  - src_edge_uuid: <Edge device 2 UUID>
+    data_filters:
+    - type: '#'
+      name: '#'
+
+device_connectors_upstream:
+- id: dc-up-cdr
+  data_name_prefix: v1/1/
+  dest_ids:
+  - up-ros-data
+  format: logger-msg
+  ipc:
+    type: fifo
+    path: /var/run/intdash/upstream_001.fifo
+- id: dc-up-json
+  data_name_prefix: v1/2/
+  dest_ids:
+  - up-ros-data
+  format: logger-msg
+  ipc:
+    type: fifo
+    path: /var/run/intdash/upstream_002.fifo
+- id: dc-up-msgpack
+  data_name_prefix: v1/3/
+  dest_ids:
+  - up-ros-data
+  format: iscp-v2-compat
+  ipc:
+    type: fifo
+    path: /var/run/intdash/upstream_003.fifo
+
+device_connectors_downstream:
+- id: dc-down-cdr
+  data_name_prefix: "v1/1/"
+  format: logger-msg
+  ipc:
+    type: fifo
+    path: /var/run/intdash/downstream_010.fifo
+
+streamer:
+  auto_start: true
+  log_file: /tmp/intdash-agent-streamer.log

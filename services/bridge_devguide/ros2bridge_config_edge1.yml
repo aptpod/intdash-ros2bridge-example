@@ -1,0 +1,58 @@
+num_callback_threads: 15
+
+upstream:
+  enabled: true
+  formats:
+  - format: "cdr"
+    writer:
+      path: "/var/run/intdash/upstream_001.fifo"
+      buffering: true
+  - format: "json"
+    writer:
+      path: "/var/run/intdash/upstream_002.fifo"
+      max_array_size: 100
+  - format: "msgpack"
+    writer:
+      path: "/var/run/intdash/upstream_003.fifo"
+      buffering: true
+
+downstream:
+  enabled: true
+  format: "cdr"
+  reader:
+    path: "/var/run/intdash/downstream_010.fifo"
+
+action_servers:
+  enabled: true
+  actions:
+  - action_name: "/fibonacci"
+    action_type: "example_interfaces/action/Fibonacci"
+    format:
+      - "cdr"
+      - "json"
+
+parameter_service_servers:
+  enabled: true
+  nodes:
+  - node_name: "/minimal_action_server"
+    format:
+    - "cdr"
+    - "json"
+
+service_servers:
+  enabled: true
+  services:
+  - service_name: "/add_two_ints"
+    service_type: "example_interfaces/srv/AddTwoInts"
+    format:
+      - "cdr"
+      - "json"
+
+subscribers:
+  enabled: true
+  topics:
+  - topic_name: "/chatter"
+    format:
+    - "cdr"
+    - "json"
+    - "msgpack"
