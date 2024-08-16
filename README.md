@@ -68,3 +68,28 @@ Dockerfile example : `assets/your_ros_nodes_with_bridge.Dockerfile`
 If you want to change agent config, please edit `service/agent/agent2_config.yml`.
 
 Please refer Aptpod official documents how to configure intdash Edge Agent2.
+
+## Configuration for developer's guide
+
+After editing edge1.env and edge2.env, as well as the src_edge_uuid in service/agent2/agent2_config_edge1.yml and service/agent2/agent2_config_edge2.yml, execute the following commands.
+
+By executing the command, you can test the ROS2 commands on the intdash ROS2Bridge container.
+
+### Edge device 1
+
+```
+$ docker compose -f docker-compose-edge1.yml --env-file edge1.env -p edge1 up -d
+$ docker exec -it  edge1-intdash_ros2bridge-1 bash
+
+# source /opt/ros/humble/setup.bash 
+```
+
+### Edge device 2
+
+```
+$ docker compose -f docker-compose-edge2.yml --env-file edge2.env -p edge2 up -d
+$ docker exec -it  edge2-intdash_ros2bridge-1 bash
+
+# source /opt/ros/humble/setup.bash 
+```
+
