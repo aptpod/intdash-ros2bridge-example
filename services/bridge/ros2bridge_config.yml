@@ -8,6 +8,12 @@ upstream:
       path: "/var/run/intdash/up-ros-data.fifo"
       buffering: true
 
+downstream:
+  enabled: true
+  format: "msgpack"
+  reader:
+    path: "/var/run/intdash/down-ros-data.fifo"
+
 subscribers:
   enabled: true
   topics:
