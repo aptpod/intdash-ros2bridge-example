@@ -6,12 +6,15 @@ This is an example docker container environemnt for intdash ROS2Bridge.
 
 ### Contents of the demo
 
-This demonstration provide following upstreams for intdash.
+This demonstration provide following upstreams and downstreams for intdash.
 
 - Upstream
   - String topic (name: /hello)
   - Poingcloud2 topic (name: /cube_points)
   - Image topic (name: /compressed_image)
+- Downstream
+  - Any topic
+    - You can manipulate the center coordinates of /cube_points using the axes[0] and axes[1] of the /joy topic.
 
 ROS2 is supported.
 
