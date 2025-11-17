@@ -26,4 +26,7 @@ subscribers:
   - topic_name: "/compressed_image"
     format:
     - "msgpack"
+  - topic_name: "/rosbag_test"
+    format:
+    - "msgpack"
 
