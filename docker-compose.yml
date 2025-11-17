@@ -1,8 +1,9 @@
-version: '3'
 services:
   configuration:
-    image: public.ecr.aws/aptpod/intdash-edge-agent2:latest
-    command: /bin/bash -c 'cat /tmp/agent2_config.yml | intdash-agentd config apply /dev/stdin'
+    image: public.ecr.aws/aptpod/intdash-edge-agent2:$AGENT2_VERSION
+    command: >
+      /bin/bash -c "
+      sed -e 's/<Controller Edge UUID>/${AGENT_INTDASH_CONTROLLER_EDGE}/g' /tmp/agent2_config.yml | intdash-agentd config apply /dev/stdin"
     volumes:
       - ./services/agent2/agent2_config.yml:/tmp/agent2_config.yml
       - intdash-edge-agent2-lib:/var/lib/intdash
@@ -31,7 +32,6 @@ services:
 
   intdash_ros2bridge:
     image: public.ecr.aws/aptpod/intdash-ros2bridge:$ROS2_DISTRO-$BRIDGE_VERSION
-    container_name: intdash_ros2bridge
     init: true
     depends_on:
       intdash-agent:
@@ -50,7 +50,6 @@ services:
       context: ./services/ros2_demo/docker
       args:
         - ROS2_DISTRO=$ROS2_DISTRO
-    container_name: ros2_demo
     init: true
     depends_on:
       - intdash_ros2bridge
@@ -60,7 +59,23 @@ services:
       bash -c "source /opt/ros/$ROS2_DISTRO/setup.bash &&
                source install/setup.bash &&
                stdbuf -o0 ros2 launch ros2_demo ros2_demo.launch.xml"
-    
+
+  ros2_bag:
+    build:
+      context: ./services/ros2_bag
+      args:
+        - ROS2_DISTRO=$ROS2_DISTRO
+    init: true
+    depends_on:
+      - intdash_ros2bridge
+    network_mode: host
+    ipc: host
+    volumes:
+     - ./services/ros2_bag/data/$ROS2_DISTRO/sample:/tmp/rosbag
+    command: |
+      bash -c "source /opt/ros/$ROS2_DISTRO/setup.bash &&
+               stdbuf -o0 ros2 bag play --loop /tmp/rosbag"
+
 volumes:
   intdash-edge-agent2-lib:
     name: intdash-edge-agent2-lib

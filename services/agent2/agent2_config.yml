@@ -13,7 +13,7 @@ downstream:
 
 device_connectors_upstream:
 - id: dc-up-ros-data
-  data_name_prefix: v1/10/
+  data_name_prefix: ros
   dest_ids:
   - up-ros-data
   enabled: true

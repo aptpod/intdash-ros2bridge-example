@@ -12,6 +12,7 @@ This demonstration provide following upstreams and downstreams for intdash.
   - String topic (name: /hello)
   - Poingcloud2 topic (name: /cube_points)
   - Image topic (name: /compressed_image)
+  - String topic from sample rosbag (name: /rosbag_test)
 - Downstream
   - Any topic
     - You can manipulate the center coordinates of /cube_points using the axes[0] and axes[1] of the /joy topic.
@@ -48,9 +49,35 @@ Run following command.
 docker compose up
 ```
 
+### Playing rosbag and streaming it upstream
+
+Place the rosbag directory under the directory where docker-compose.yml is located.
+In the ros2_bag service configuration in docker-compose.yml, mount the path corresponding to the directory as a Docker volume.
+
+Configuration example:
+
+```
+  ros2_bag:
+    (omitted)
+    volumes:
+     - ./services/ros2_bag/data/$ROS2_DISTRO/sample:/tmp/rosbag
+    command: |
+      bash -c "source /opt/ros/$ROS2_DISTRO/setup.bash &&
+               stdbuf -o0 ros2 bag play --loop /tmp/rosbag"
+```
+
+### About downstream functionality
+
+An example node that receives downstream joy topics from Data Visualizer's controller parts is provided.
+The following files contain related configurations and implementations:
+
+- `/services/agent2/agent2_config.yml`
+- `/services/bridge/ros2bridge_config.yml`
+- `services/ros2_demo/docker/src/ros2_demo/ros2_demo/pointcloud2_pub.py`
+
 ## Customize Docker environment for intdash ROS Bridge
 
-### Add custom message types to intdash ROS Bridge
+### Add custom message types to intdash ROS Bridge and use non-standard messages in rosbag
 
 If you want to add custom message which are not included in ROS base Docker image, there are 2 methods.
 
@@ -65,6 +92,10 @@ Dockerfile example : `assets/custom_msg_with_bridge.Dockerfile`
 Install intdash ROS2Bridge into your custom Docker image by apt tool. Please refer Aptpod official documents how to install intdash ROS2Bridge.
 
 Dockerfile example : `assets/your_ros_nodes_with_bridge.Dockerfile`
+
+#### Extending the ros2_bag service
+
+The Docker image used as the base for ros2_bag only contains standard message definitions. If you want to include non-standard messages, you need to edit `services/ros2_bag/Dockerfile` according to the intdash ROS2Bridge configuration above, and install or build the necessary message packages.
 
 ### Update configuration for intdash Edge Agent2
 
